@@ -1,0 +1,27 @@
+[
+  {
+    "test": "Constitution check",
+    "isValid": true,
+    "message": "Fighter\u0027s constitution is valid."
+  },
+  {
+    "test": "Dexterity check",
+    "isValid": true,
+    "message": "Fighter\u0027s dexterity is valid."
+  },
+  {
+    "test": "Strength check",
+    "isValid": true,
+    "message": "Fighter\u0027s strength is valid."
+  },
+  {
+    "test": "XP check",
+    "isValid": true,
+    "message": "Fighter\u0027s XP is valid."
+  },
+  {
+    "test": "URL check",
+    "isValid": true,
+    "message": "Fighter\u0027s URL is valid."
+  }
+]
