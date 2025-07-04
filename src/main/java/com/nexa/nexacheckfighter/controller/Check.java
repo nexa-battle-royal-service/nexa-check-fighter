@@ -15,7 +15,11 @@ public class Check {
     }
 
     @GetMapping("/check-fighter")
-    public String checkFighter(@RequestParam(name = "id", required = true) int id) {
-        return this.checkService.checkFighter(id);
+    public String checkFighter(@RequestParam(name = "id", required = true) int id,
+                               @RequestParam(name = "verbose", defaultValue = "n") char verbose) {
+        if (verbose == 'y' || verbose == 'Y') {
+            return this.checkService.checkFighter(id, true);
+        }
+        return this.checkService.checkFighter(id, false);
     }
 }

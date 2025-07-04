@@ -23,5 +23,40 @@
     "test": "URL check",
     "isValid": true,
     "message": "Fighter\u0027s URL is valid."
+  },
+  {
+    "test": "Player check",
+    "isValid": true,
+    "message": "Fighter\u0027s player is valid."
+  },
+  {
+    "test": "Fighter URL check",
+    "isValid": true,
+    "message": "Fighter URL is reachable and returns a valid fighter."
+  },
+  {
+    "test": "Fighter data consistency check",
+    "isValid": true,
+    "message": "Fighter data from URL matches local fighter data."
+  },
+  {
+    "test": "Loose API check",
+    "isValid": true,
+    "message": "Fighter URL is reachable and returns a valid answer after loose."
+  },
+  {
+    "test": "Loose data consistency check",
+    "isValid": true,
+    "message": "Fighter data from URL after loose matches local fighter data."
+  },
+  {
+    "test": "Loose API check",
+    "isValid": true,
+    "message": "Fighter URL is reachable and returns a valid answer after loose."
+  },
+  {
+    "test": "Win data consistency check",
+    "isValid": false,
+    "message": "Fighter data from URL after win does not match local fighter data."
   }
 ]
