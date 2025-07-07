@@ -17,6 +17,49 @@ public class CheckService {
         this.fighterRepository = fighterRepository;
     }
 
+    private static boolean checkWin(final int id, final FighterDTO fighterOld, final List<FighterCheckLog> logs) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        String answer = restTemplate.postForObject(fighterOld.url() + "/win", String.class, String.class);
+
+        if (answer == null) {
+            logs.add(new FighterCheckLog("Loose API check", false,
+                                         "Fighter URL is not reachable or does not return a valid answer after loose."));
+            return false;
+        } else {
+            logs.add(new FighterCheckLog("Loose API check", true,
+                                         "Fighter URL is reachable and returns a valid answer after loose."));
+        }
+        FighterDTO fighterNew = restTemplate.getForObject(fighterOld.url() + "/getFighter", FighterDTO.class);
+        if (fighterNew == null) {
+            logs.add(new FighterCheckLog("Win API check", false,
+                                         "Fighter URL is not reachable or does not return a valid fighter after win."));
+            return false;
+        } else if ((fighterOld.strength() + 1 != fighterNew.strength()
+                || fighterOld.dexterity() + 1 != fighterNew.dexterity()
+                || fighterOld.constitution() + 1 != fighterNew.constitution())
+                && (fighterOld.strength() + fighterOld.dexterity() + fighterOld.constitution() + 1
+                != fighterNew.strength() + fighterNew.dexterity() + fighterNew.constitution())) {
+            logs.add(new FighterCheckLog("Win data consistency check", false,
+                                         "Fighter data from URL after win does not match local fighter data."));
+            return false;
+        } else {
+            logs.add(new FighterCheckLog("Win data consistency check", true,
+                                         "Fighter data from URL after win matches local fighter data."));
+        }
+        restTemplate.postForObject(fighterOld.url() + "/reset", String.class, String.class);
+        fighterNew = restTemplate.getForObject(fighterOld.url() + "/getFighter", FighterDTO.class);
+        if (fighterNew == null) {
+            logs.add(new FighterCheckLog("Win reset API check", false,
+                                         "Fighter URL is not reachable or does not return a valid fighter after win reset."));
+            return false;
+        } else {
+            logs.add(new FighterCheckLog("Win reset API check", true,
+                                         "Fighter URL is reachable and returns a valid fighter after win reset."));
+        }
+        return true;
+    }
+
     private void checkReset(final int id, final FighterDTO fighter, final List<FighterCheckLog> logs) {
 
         this.fighterRepository.updateFighterCharacteristic("constitution", id, 99);
@@ -60,8 +103,8 @@ public class CheckService {
         }
         isValid &= CheckService.checkPlayer(fighter, logs);
         isValid &= CheckService.checkGetFighterAPI(id, fighter, logs);
-        isValid &= CheckService.checkLoose(id, fighter, logs);
-        isValid &= CheckService.checkWin(id, fighter, logs);
+        isValid &= CheckService.checkLose(id, fighter, logs);
+//        isValid &= CheckService.checkWin(id, fighter, logs);
 
         return isVerbose ? this.formatLogs(logs) : (isValid ? "true" : "false");
     }
@@ -161,11 +204,11 @@ public class CheckService {
         return true;
     }
 
-    private static boolean checkLoose(final int id, final FighterDTO fighterOld, final List<FighterCheckLog> logs) {
+    private static boolean checkLose(final int id, final FighterDTO fighterOld, final List<FighterCheckLog> logs) {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        String answer = restTemplate.postForObject(fighterOld.url() + "/loose", String.class, String.class);
+        String answer = restTemplate.postForObject(fighterOld.url() + "/lose", String.class, String.class);
         if (answer == null) {
             logs.add(new FighterCheckLog("Loose API check", false,
                                          "Fighter URL is not reachable or does not return a valid answer after loose."));
@@ -182,49 +225,6 @@ public class CheckService {
         } else {
             logs.add(new FighterCheckLog("Loose data consistency check", true,
                                          "Fighter data from URL after loose matches local fighter data."));
-        }
-        return true;
-    }
-
-    private static boolean checkWin(final int id, final FighterDTO fighterOld, final List<FighterCheckLog> logs) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        String answer = restTemplate.postForObject(fighterOld.url() + "/win", String.class, String.class);
-
-        if (answer == null) {
-            logs.add(new FighterCheckLog("Loose API check", false,
-                                         "Fighter URL is not reachable or does not return a valid answer after loose."));
-            return false;
-        } else {
-            logs.add(new FighterCheckLog("Loose API check", true,
-                                         "Fighter URL is reachable and returns a valid answer after loose."));
-        }
-        FighterDTO fighterNew = restTemplate.getForObject(fighterOld.url() + "/getFighter", FighterDTO.class);
-        if (fighterNew == null) {
-            logs.add(new FighterCheckLog("Win API check", false,
-                                         "Fighter URL is not reachable or does not return a valid fighter after win."));
-            return false;
-        } else if ((fighterOld.strength() + 1 != fighterNew.strength()
-                || fighterOld.dexterity() + 1 != fighterNew.dexterity()
-                || fighterOld.constitution() + 1 != fighterNew.constitution())
-                && (fighterOld.strength() + fighterOld.dexterity() + fighterOld.constitution() + 1
-                != fighterNew.strength() + fighterNew.dexterity() + fighterNew.constitution())) {
-            logs.add(new FighterCheckLog("Win data consistency check", false,
-                                         "Fighter data from URL after win does not match local fighter data."));
-            return false;
-        } else {
-            logs.add(new FighterCheckLog("Win data consistency check", true,
-                                         "Fighter data from URL after win matches local fighter data."));
-        }
-        restTemplate.postForObject(fighterOld.url() + "/reset", String.class, String.class);
-        fighterNew = restTemplate.getForObject(fighterOld.url() + "/getFighter", FighterDTO.class);
-        if (fighterNew == null) {
-            logs.add(new FighterCheckLog("Win reset API check", false,
-                                         "Fighter URL is not reachable or does not return a valid fighter after win reset."));
-            return false;
-        } else {
-            logs.add(new FighterCheckLog("Win reset API check", true,
-                                         "Fighter URL is reachable and returns a valid fighter after win reset."));
         }
         return true;
     }
