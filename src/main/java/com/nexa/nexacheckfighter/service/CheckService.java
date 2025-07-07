@@ -165,7 +165,7 @@ public class CheckService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        String answer = restTemplate.getForObject(fighterOld.url() + "/loose", String.class);
+        String answer = restTemplate.postForObject(fighterOld.url() + "/loose", String.class, String.class);
         if (answer == null) {
             logs.add(new FighterCheckLog("Loose API check", false,
                                          "Fighter URL is not reachable or does not return a valid answer after loose."));
@@ -189,7 +189,7 @@ public class CheckService {
     private static boolean checkWin(final int id, final FighterDTO fighterOld, final List<FighterCheckLog> logs) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String answer = restTemplate.getForObject(fighterOld.url() + "/win", String.class);
+        String answer = restTemplate.postForObject(fighterOld.url() + "/win", String.class, String.class);
 
         if (answer == null) {
             logs.add(new FighterCheckLog("Loose API check", false,
@@ -216,7 +216,7 @@ public class CheckService {
             logs.add(new FighterCheckLog("Win data consistency check", true,
                                          "Fighter data from URL after win matches local fighter data."));
         }
-        restTemplate.getForObject(fighterOld.url() + "/reset", String.class);
+        restTemplate.postForObject(fighterOld.url() + "/reset", String.class, String.class);
         fighterNew = restTemplate.getForObject(fighterOld.url() + "/getFighter", FighterDTO.class);
         if (fighterNew == null) {
             logs.add(new FighterCheckLog("Win reset API check", false,
